@@ -1,0 +1,6 @@
+Metrics/LineLength:
+  Max: 99
+Documentation:
+    Enabled: false
+AsciiComments:
+  Enabled: false
