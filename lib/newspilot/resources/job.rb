@@ -9,15 +9,15 @@ module Newspilot
     end
 
     def production_date
-      Time.parse(prodDate)
+      Time.parse(prodDate) unless prodDate == 'future'
     end
 
     def photo_date
-      Time.parse(photoDate)
+      Time.parse(photoDate) unless photoDate == 'future'
     end
 
     def created_at
-      Time.parse(createdDate)
+      Time.parse(createdDate) unless createdDate == 'future'
     end
 
     def created_by
@@ -26,7 +26,10 @@ module Newspilot
 
     def place
       geodata['geoDataEntry'].first['name']
+    rescue
+      ''
     end
+    alias_method :location, :place
 
     def image_links
       # @image_links ||= Newspilot.get("#{resource_name}/#{id}/imageLinks")
