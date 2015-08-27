@@ -51,6 +51,10 @@ module Newspilot
       @department ||= Department.find(attributes['respDepartment'])
     end
 
+    def department_id
+      attributes['respDepartment']
+    end
+
     def organization
       @organization ||= Organization.find(attributes['organizationId'])
     end
