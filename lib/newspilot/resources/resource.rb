@@ -70,12 +70,21 @@ module Newspilot
         [:photoDate, :prodDate].each do |date_param|
           options[date_param] = date_range_parse(options[date_param]) if options[date_param]
         end
+        options = updated_after(options) if options[:updated_after]
         options
       end
 
       # add departments from the configuration to the query
       def query_depts
         { 'respDepartment' => Newspilot.configuration.departments }
+      end
+
+      def updated_after(options)
+        updated_after = options.delete(:updated_after)
+        return options unless updated_after.is_a?(Time)
+        updated_range = updated_after.strftime('%Y-%m-%dT%H:%M:%S.%L%:z') + ' TO ' +
+                        (updated_after + 2.years).strftime('%Y-%m-%dT%H:%M:%S.%L%:z')
+        options.merge(updatedDate: updated_range)
       end
 
       def date_range_parse(date_range)
