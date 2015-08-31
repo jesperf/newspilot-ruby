@@ -26,5 +26,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'faraday'
   spec.add_dependency 'faraday_middleware'
-  spec.add_development_dependency 'faraday-detailed_logger'
+  spec.add_dependency 'faraday-detailed_logger'
 end
