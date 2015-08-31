@@ -44,7 +44,7 @@ module Newspilot
 
     # Newspilot-användaren måste ha mer access än vanliga använder för att kunna använda denna
     def users
-      @users ||= attributes['responsibleUsers'].flatten.slice(1).map { |v| User.find(v['userId']) }
+      @users ||= attributes['responsibleUsers'].flatten.slice(1).map { |v| User.find(v['userId']) rescue nil }.compact
     end
 
     def department
