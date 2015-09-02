@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Newspilot::VERSION
   spec.authors       = ["Jesper Frisk"]
   spec.email         = ["jesper.frisk@di.se"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Newspilot API client.}
+  spec.description   = ""
   spec.homepage      = ""
   spec.license       = "MIT"
 
