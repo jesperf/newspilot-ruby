@@ -58,5 +58,13 @@ module Newspilot
     def organization
       @organization ||= Organization.find(attributes['organizationId'])
     end
+    
+    def articles
+      @articles ||= JobArticles.find(job_id: id)
+    end
+    
+    def sections
+      articles.collect { |a| a.section.name }
+    end
   end
 end
