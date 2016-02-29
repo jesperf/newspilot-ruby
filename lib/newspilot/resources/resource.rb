@@ -20,10 +20,11 @@ module Newspilot
 
     def method_missing(method, *_args, &_block)
       return @attributes[method.to_s] if @attributes.key?(method.to_s)
+      return @attributes[method.to_s.camelize(:lower)] if @attributes.key?(method.to_s.camelize(:lower))
     end
 
     def respond_to_missing?(method_name, include_private = false)
-      @attributes.key?(method.to_s) || super
+      @attributes.key?(method.to_s) || @attributes.key?(method.to_s.camelize(:lower)) || super
     end
 
     module ClassMethods
