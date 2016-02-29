@@ -30,7 +30,7 @@ module Newspilot
       ''
     end
     alias_method :location, :place
-
+  
     def image_links
       # @image_links ||= Newspilot.get("#{resource_name}/#{id}/imageLinks")
       @image_links ||= JobImageLink.find(job_id: id)
@@ -64,7 +64,7 @@ module Newspilot
     end
     
     def sections
-      articles.collect { |a| a.section.name }
+      articles.collect { |a| a.section }
     end
   end
 end
