@@ -2,6 +2,7 @@ require 'logger'
 require 'uri'
 require 'faraday'
 require 'faraday_middleware'
+require 'active_support/all'
 require 'faraday/detailed_logger/middleware'
 
 module Newspilot
@@ -46,7 +47,7 @@ module Newspilot
       @conn = Faraday.new(url, options) do |cxn|
         # cxn.request :json
         cxn.response :logger, logger
-        cxn.response :detailed_logger, Rails.logger if Rails.env.development?
+        cxn.response :detailed_logger, Rails.logger if defined?(Rails) && Rails.env.development?
         # cxn.response :json
         cxn.response :raise_error  # raise exceptions on 40x, 50x responses
         cxn.adapter CONNECTION_SETTINGS[:faraday_adapter]
