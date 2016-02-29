@@ -3,7 +3,7 @@ module Newspilot
     include Newspilot::Resource
     
     def section
-      @section ||= Section.find(section_id)
+      @section ||= Section.find(section_id) unless section_id == 0
     end
   end
 end

@@ -12,10 +12,6 @@ module Newspilot
       attributes['shortName']
     end
 
-    def description
-      attributes['description']
-    end
-
     def role
       @role ||= UserRole.find(attributes['userRoleId'])
     end
