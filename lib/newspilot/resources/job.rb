@@ -30,7 +30,7 @@ module Newspilot
       ''
     end
     alias_method :location, :place
-  
+
     def image_links
       # @image_links ||= Newspilot.get("#{resource_name}/#{id}/imageLinks")
       @image_links ||= JobImageLink.find(job_id: id)
@@ -44,7 +44,7 @@ module Newspilot
 
     # Newspilot-användaren måste ha mer access än vanliga använder för att kunna använda denna
     def users
-      @users ||= attributes['responsibleUsers'].flatten.slice(1).map { |v| User.find(v['userId']) rescue nil }.compact
+      @users ||= JobResponsibility.find(job_id: id).map { |r| r.user rescue nil }.compact
     end
 
     def department
@@ -58,11 +58,11 @@ module Newspilot
     def organization
       @organization ||= Organization.find(attributes['organizationId'])
     end
-    
+
     def articles
       @articles ||= JobArticles.find(job_id: id)
     end
-    
+
     def sections
       articles.collect { |a| a.section }
     end
