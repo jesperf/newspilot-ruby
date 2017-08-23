@@ -19,7 +19,7 @@ module Newspilot
     def self.included(base)
       base.extend ClassMethods
     end
-    
+
     def etag
       headers['etag']
     end
@@ -28,7 +28,7 @@ module Newspilot
       return @attributes[method.to_s] if @attributes.key?(method.to_s)
       return @attributes[method.to_s.camelize(:lower)] if @attributes.key?(method.to_s.camelize(:lower))
 
-      case method.to_s 
+      case method.to_s
       when /(.+)=$/
         attribute = method.to_s.chop
         if @attributes.key?(attribute)
@@ -37,29 +37,29 @@ module Newspilot
         elsif @attributes.key?(attribute.camelize(:lower))
           @attributes[attribute.camelize(:lower)] = args[0]
         end
-        
+
       end
     end
 
     def respond_to_missing?(method_name, include_private = false)
       @attributes.key?(method.to_s) || @attributes.key?(method.to_s.camelize(:lower)) || super
     end
-    
+
     def save
       begin
         @response = Newspilot.put(etag, href, self.sanitize)
         @headers = @response.headers
-      rescue 
+      rescue
         # restore the href on the instance if there was an exception
         # this will allow us to try to fix any attributes and save again
         raise
       end
     end
-    
+
     def sanitize
       JSON.generate(@attributes)
     end
-    
+
     def href
       self.class.collection_with_id(id)
     end
@@ -83,8 +83,8 @@ module Newspilot
       def where(options = {})
         options = preprocess_options(options)
         response = Newspilot.get collection_name, options
-        response = JSON.parse(response.body)
-        response.first[1].map { |attributes| construct_from_response attributes, response.headers }
+        json_response = JSON.parse(response.body)
+        json_response.first[1].map { |attributes| construct_from_response attributes, response.headers }
       end
 
       alias_method :all, :where
@@ -127,11 +127,12 @@ module Newspilot
 
       def date_range_parse(date_range)
         return unless date_range.is_a?(Range)
-        a = date_range.to_a
-        return if !a.first.is_a?(Date) && !a.last.is_a?(Date)
+        #a = date_range.to_a
+        a = date_range
+        return if !a.begin.is_a?(Date) && !a.end.is_a?(Date)
 
-        "#{a.first.strftime('%Y-%m-%d')} TO " \
-          "#{a.last.strftime('%Y-%m-%d')}"
+        "#{a.begin.strftime('%Y-%m-%d')} TO " \
+          "#{a.end.strftime('%Y-%m-%d')}"
       end
     end
   end
