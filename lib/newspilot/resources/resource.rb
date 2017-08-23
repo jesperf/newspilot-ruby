@@ -5,9 +5,11 @@ module Newspilot
   module Resource
     attr_accessor :attributes
     attr_accessor :id
+    attr_accessor :headers
 
-    def initialize(attributes = {})
+    def initialize(attributes = {}, headers = {})
       @attributes = attributes
+      @headers = headers
     end
 
     def id
@@ -17,37 +19,72 @@ module Newspilot
     def self.included(base)
       base.extend ClassMethods
     end
+    
+    def etag
+      headers['etag']
+    end
 
-    def method_missing(method, *_args, &_block)
+    def method_missing(method, *args, &_block)
       return @attributes[method.to_s] if @attributes.key?(method.to_s)
       return @attributes[method.to_s.camelize(:lower)] if @attributes.key?(method.to_s.camelize(:lower))
+
+      case method.to_s 
+      when /(.+)=$/
+        attribute = method.to_s.chop
+        if @attributes.key?(attribute)
+          puts "attribute: #{@attributes[attribute]}"
+          @attributes[attribute] = args[0]
+        elsif @attributes.key?(attribute.camelize(:lower))
+          @attributes[attribute.camelize(:lower)] = args[0]
+        end
+        
+      end
     end
 
     def respond_to_missing?(method_name, include_private = false)
       @attributes.key?(method.to_s) || @attributes.key?(method.to_s.camelize(:lower)) || super
     end
+    
+    def save
+      begin
+        @response = Newspilot.put(etag, href, self.sanitize)
+        @headers = @response.headers
+      rescue 
+        # restore the href on the instance if there was an exception
+        # this will allow us to try to fix any attributes and save again
+        raise
+      end
+    end
+    
+    def sanitize
+      JSON.generate(@attributes)
+    end
+    
+    def href
+      self.class.collection_with_id(id)
+    end
 
     module ClassMethods
-      def construct_from_response(payload)
+      def construct_from_response(payload, headers)
         resource_body = if payload.size > 2
                           payload
                         else
                           payload[1].first
                         end
         resource_body.delete('link')
-        new resource_body
+        new resource_body, headers
       end
 
       def find(id)
         response = Newspilot.get(collection_with_id(id))
-        construct_from_response JSON.parse(response.body)
+        construct_from_response JSON.parse(response.body), response.headers
       end
 
       def where(options = {})
         options = preprocess_options(options)
         response = Newspilot.get collection_name, options
         response = JSON.parse(response.body)
-        response.first[1].map { |attributes| construct_from_response attributes }
+        response.first[1].map { |attributes| construct_from_response attributes, response.headers }
       end
 
       alias_method :all, :where

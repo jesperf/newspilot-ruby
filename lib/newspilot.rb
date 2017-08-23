@@ -24,9 +24,9 @@ module Newspilot
     #   self.client.post *args
     # end
     #
-    # def put(*args, &block)
-    #   self.client.put *args
-    # end
+    def put(*args, &block)
+      self.client.put *args
+    end
 
     def get_jpeg(*args)
       client.get_jpeg(*args)

@@ -47,7 +47,7 @@ module Newspilot
       @conn = Faraday.new(url, options) do |cxn|
         # cxn.request :json
         cxn.response :logger, logger
-        cxn.response :detailed_logger, Rails.logger if defined?(Rails) && Rails.env.development?
+        cxn.response :detailed_logger #, Rails.logger if defined?(Rails) && Rails.env.development?
         # cxn.response :json
         cxn.response :raise_error  # raise exceptions on 40x, 50x responses
         cxn.adapter CONNECTION_SETTINGS[:faraday_adapter]
@@ -74,6 +74,14 @@ module Newspilot
       conn.headers['Accept'] = 'image/jpeg'
       conn.basic_auth(config.username, config.password)
       conn.get(*args)
+    end
+    
+    def put(etag, *args)
+      conn.headers['Content-Type'] = 'application/json'
+      conn.headers['Accept'] = "#{CONNECTION_SETTINGS[:accept_type]}"
+      conn.headers['If-Match'] = etag
+      conn.basic_auth(config.username, config.password)
+      conn.put(*args)
     end
 
     # def method_missing(method, *args, &block)
