@@ -31,6 +31,15 @@ module Newspilot
     end
     alias_method :location, :place
 
+    def location=(name)
+      if geodata['geoDataEntry'].first['name']
+        geodata['geoDataEntry'].first['name'] = name
+      else
+        geodata['geoDataEntry'] = [{ "name" => name, "latitude"=>0.0, "longitude"=>0.0 }]
+      end
+    end
+    alias_method :place=, :location=
+
     def image_links
       # @image_links ||= Newspilot.get("#{resource_name}/#{id}/imageLinks")
       @image_links ||= JobImageLink.find(job_id: id)
@@ -61,6 +70,10 @@ module Newspilot
 
     def articles
       @articles ||= JobArticles.find(job_id: id)
+    end
+
+    def user_data
+      @user_data ||= JobUserData.find(job_id: id)
     end
 
     def sections
