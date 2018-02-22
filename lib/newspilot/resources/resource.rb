@@ -70,9 +70,9 @@ module Newspilot
                           payload
                         else
                           payload[1].first
-                        end
-        resource_body.delete('link')
-        new resource_body, headers
+                        end unless payload.empty?
+        resource_body.delete('link') if resource_body
+        new (resource_body) ? resource_body : {}, headers
       end
 
       def find(id)
