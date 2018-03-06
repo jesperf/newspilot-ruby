@@ -69,8 +69,8 @@ module Newspilot
         resource_body = if payload.size > 2
                           payload
                         else
-                          payload[1].first
-                        end unless payload.empty?
+                          payload[1].first if payload[1]
+                        end if payload && !payload.empty?
         resource_body.delete('link') if resource_body
         new (resource_body) ? resource_body : {}, headers
       end
