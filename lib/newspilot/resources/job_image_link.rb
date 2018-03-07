@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Newspilot
   class JobImageLink
     include Newspilot::Resource

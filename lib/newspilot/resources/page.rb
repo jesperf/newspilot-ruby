@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Newspilot
   class Page
     include Newspilot::Resource
